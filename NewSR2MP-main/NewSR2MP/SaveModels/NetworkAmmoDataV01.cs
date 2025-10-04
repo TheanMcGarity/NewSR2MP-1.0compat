@@ -1,0 +1,39 @@
+namespace NewSR2MP.SaveModels;
+
+public class NetworkAmmoDataV01 : SaveComponentBase<NetworkAmmoDataV01>
+{
+    public override string ComponentIdentifier => "MPAD";
+    public override int ComponentVersion => 1;
+
+    public int ident;
+    public int count;
+    
+    public float emotionX, emotionY, emotionZ, emotionW;
+    
+    public override void WriteComponent()
+    {
+        Write(ident);
+        Write(count);
+        
+        Write(emotionX);
+        Write(emotionY);
+        Write(emotionZ);
+        Write(emotionW);
+    }
+
+    public override void ReadComponent()
+    {
+        ident = Read<int>();
+        count = Read<int>();
+        
+        emotionX = Read<float>();
+        emotionY = Read<float>();
+        emotionZ = Read<float>();
+        emotionW = Read<float>();
+    }
+
+    public override void UpgradeComponent(NetworkAmmoDataV01 old)
+    {
+        throw new NotImplementedException();
+    }
+}
