@@ -183,7 +183,7 @@ public partial class NetworkHandler
                 _gameObject = null,
                 AmountDeposited = packet.count
             };
-            sceneContext.GameModel.switches.Add(packet.id, model);
+            sceneContext.GameModel.depositors.Add(packet.id, model);
         }
     }
 
