@@ -460,18 +460,22 @@ namespace NewSR2MP.Packet
         public enum GadgetType : byte
         {
             NON_GADGET,
+            
             /// <summary>
             /// Basic gadgets like decorations
             /// </summary>
             BASIC,
+            
             /// <summary>
             /// Teleporters
             /// </summary>
             LINKED_NO_AMMO,
+            
             /// <summary>
             /// Warp Depots
             /// </summary>
             LINKED_WITH_AMMO,
+            
             /// <summary>
             /// The drone
             /// </summary>

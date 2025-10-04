@@ -110,9 +110,9 @@ namespace NewSR2MP.Patches
             {
                 identifiableTypes[GetIdentID(ident.Value)] = ident.Value;
             }
-            foreach (var pedia in Resources.FindObjectsOfTypeAll<PediaEntry>()) // SavedGame's list doesnt include some pedia entries.
+            foreach (var pedia in saveRef._pediaEntryLookup)// SavedGame's list doesnt include some pedia entries.
             {
-                pediaEntries[pedia.name] = pedia; 
+                pediaEntries[pedia.key] = pedia.value; 
             }
 
             foreach (var scene in saveRef._sceneGroupTranslation.RawLookupDictionary)
