@@ -10,7 +10,7 @@ namespace NewSR2MP.Packet
         public List<InitPlotData> initPlots;
         public List<InitAccessData> initAccess;
         public List<InitSwitchData> initSwitches;
-        public Dictionary<int, TreasurePod.State> initPods;
+        public Dictionary<string, TreasurePod.State> initPods;
         
         public List<InitResourceNodeData> initResourceNodes;
 
@@ -23,6 +23,8 @@ namespace NewSR2MP.Packet
         public int playerID;
         
         public int money;
+        public int moneyRainbow;
+        
         public Dictionary<byte, sbyte> upgrades;
         public double time;
         
@@ -154,6 +156,7 @@ namespace NewSR2MP.Packet
             msg.Write(localPlayerSave.sceneGroup);
             
             msg.Write(money);
+            msg.Write(moneyRainbow);
 
             msg.Write(upgrades.Count);
             foreach (var upgrade in upgrades)
@@ -399,6 +402,7 @@ namespace NewSR2MP.Packet
 
 
             money = msg.ReadInt32();
+            moneyRainbow = msg.ReadInt32();
 
             var pUpgradesCount = msg.ReadInt32();
             upgrades = new(pUpgradesCount);
@@ -435,10 +439,10 @@ namespace NewSR2MP.Packet
                     state = msg.ReadByte()
                 });
 
-            initPods = new Dictionary<int, TreasurePod.State>();
+            initPods = new Dictionary<string, TreasurePod.State>();
             var podCount = msg.ReadInt32();
             for (int i = 0; i < podCount; i++)
-                initPods.Add(msg.ReadInt32(), (TreasurePod.State)msg.ReadByte());
+                initPods.Add(msg.ReadString(), (TreasurePod.State)msg.ReadByte());
 
             // Progress tracking
             int progressCount = msg.ReadInt32();

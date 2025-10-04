@@ -27,7 +27,6 @@ namespace NewSR2MP.Component
             if (networkPlayer == null)
             {
                 SRMP.Error("NetworkPlayerMapDisplay: No NetworkPlayer component found!");
-                return;
             }
         }
 

@@ -23,7 +23,8 @@ namespace NewSR2MP.Patches
             {
                 SetMoneyPacket message = new SetMoneyPacket()
                 {
-                    newMoney = __instance.GetCurrency(currencyDefinition)
+                    newMoney = __instance.GetCurrency(currencyDefinition),
+                    type = (byte)currencyDefinition.PersistenceId,
                 };
                 MultiplayerManager.NetworkSend(message);
             }
@@ -42,7 +43,8 @@ namespace NewSR2MP.Patches
             {
                 SetMoneyPacket message = new SetMoneyPacket()
                 {
-                    newMoney = __instance.GetCurrency(currency)
+                    newMoney = __instance.GetCurrency(currency),
+                    type = (byte)currency.PersistenceId,
                 };
                 MultiplayerManager.NetworkSend(message);
             }

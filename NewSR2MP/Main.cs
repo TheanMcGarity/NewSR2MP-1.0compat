@@ -309,14 +309,15 @@ public class Main : SR2EExpansionV1
             sceneContext.GameModel.identifiables.Clear();
             
             SRMP.Log($"========== LOADING WORLD PROGRESS FROM HOST ==========");
-            SRMP.Log($"📦 Actors: {save.initActors.Count}");
-            SRMP.Log($"🏠 Plots: {save.initPlots.Count}");
-            SRMP.Log($"🎯 Gordos: {save.initGordos.Count}");
-            SRMP.Log($"🚪 Access Doors: {save.initAccess.Count}");
-            SRMP.Log($"📚 Pedias: {save.initPedias.Count}");
-            SRMP.Log($"🗺️ Map unlocks: {save.initMaps.Count}");
-            SRMP.Log($"💰 Money: {save.money}");
-            SRMP.Log($"🔧 Upgrades: {save.upgrades.Count}");
+            SRMP.Log($"Actors: {save.initActors.Count}");
+            SRMP.Log($"Plots: {save.initPlots.Count}");
+            SRMP.Log($"Gordos: {save.initGordos.Count}");
+            SRMP.Log($"Access Doors: {save.initAccess.Count}");
+            SRMP.Log($"Pedias: {save.initPedias.Count}");
+            SRMP.Log($"Map unlocks: {save.initMaps.Count}");
+            SRMP.Log($"Money: {save.money}");
+            SRMP.Log($"Rainbow Coins: {save.moneyRainbow}");
+            SRMP.Log($"Upgrades: {save.upgrades.Count}");
             SRMP.Log($"=====================================================");
 
             foreach (var actor in sceneContext.GameModel.identifiables)
@@ -435,7 +436,8 @@ public class Main : SR2EExpansionV1
                     try
                     {
                         if (!sceneContext.GameModel.gordos.TryGetValue(gordoId, out var gm))
-                            sceneContext.GameModel.gordos.Add(gordoId, new GordoModel
+                        {
+                            gm = new GordoModel
                             {
                                 fashions = new Il2CppSystem.Collections.Generic.List<IdentifiableType>(),
                                 gordoEatCount = gordo.eaten,
@@ -444,7 +446,10 @@ public class Main : SR2EExpansionV1
                                 gameObj = null,
                                 GordoEatenCount = gordo.eaten,
                                 targetCount = gordo.targetCount
-                            });
+                            };
+
+                            sceneContext.GameModel.gordos.Add(gordoId, gm);
+                        }
 
                         if (gordo.eaten == -1 || gordo.eaten >= gm.targetCount)
                         {
@@ -467,14 +472,10 @@ public class Main : SR2EExpansionV1
             }
 
 
-            var currency = CurrencyUtility.DefaultCurrency;
-            var currentMoney = sceneContext.PlayerState.GetCurrency(currency);
-            var moneyDifference = save.money - currentMoney;
+            var currencyList = gameContext.LookupDirector._currencyList;
             
-            if (moneyDifference > 0)
-                sceneContext.PlayerState.AddCurrency(currency, moneyDifference, false, null);
-            else if (moneyDifference < 0)
-                sceneContext.PlayerState.SpendCurrency(currency, -moneyDifference, null);
+            sceneContext.PlayerState._model.SetCurrency(currencyList[0].Cast<ICurrency>(), save.money);
+            sceneContext.PlayerState._model.SetCurrency(currencyList[1].Cast<ICurrency>(), save.moneyRainbow);
 
             bool completedPedia = false;
             if (!completedPedia)
@@ -482,7 +483,8 @@ public class Main : SR2EExpansionV1
                 var pediaEntries = new Il2CppSystem.Collections.Generic.HashSet<PediaEntry>();
                 foreach (var pediaEntry in save.initPedias)
                 {
-                    pediaEntries.Add(Globals.pediaEntries[pediaEntry]);
+                    if (Globals.pediaEntries.TryGetValue(pediaEntry, out var entry))
+                        pediaEntries.Add(entry);
                 }
 
                 sceneContext.PediaDirector._pediaModel.unlocked = pediaEntries;
@@ -731,7 +733,7 @@ public class Main : SR2EExpansionV1
 
             foreach (var pod in save.initPods)
             {
-                var id = ExtendInteger(pod.Key);
+                var id = pod.Key;//ExtendInteger(pod.Key);
                 if (sceneContext.GameModel.pods.TryGetValue($"pod{id}", out var podModel))
                 {
                     podModel.state = pod.Value;

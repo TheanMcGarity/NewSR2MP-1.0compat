@@ -479,7 +479,10 @@ namespace NewSR2MP
                     fogEvents = GetListFromFogEvents(table);
 
 
-                var money = sceneContext.PlayerState.GetCurrency(CurrencyUtility.DefaultCurrency);
+                var money = sceneContext.PlayerState._model._currencies[1].Amount;
+                var moneyRainbow = 0;
+                if (sceneContext.PlayerState._model._currencies.TryGetValue(2, out var rainbow))
+                    moneyRainbow = rainbow.Amount;
 
                 var prices = new List<float>();
                 foreach (var price in sceneContext.PlortEconomyDirector._currValueMap)
@@ -496,10 +499,10 @@ namespace NewSR2MP
                 foreach (var item in sceneContext.GadgetDirector._model._itemCounts)
                     refineryItems.Add(GetIdentID(item.Key), item.Value);
 
-                Dictionary<int, TreasurePod.State> pods = new();
+                Dictionary<string, TreasurePod.State> pods = new();
                 foreach (var pod in sceneContext.GameModel.pods)
                 {
-                    pods.Add(int.Parse(pod.key.Replace("pod","")), pod.value.state);
+                    pods.Add(pod.key, pod.value.state);
                 }
 
                 // Progress tracking - пока недоступен через API

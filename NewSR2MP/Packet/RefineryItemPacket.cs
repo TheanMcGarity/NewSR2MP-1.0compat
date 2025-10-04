@@ -4,7 +4,7 @@ namespace NewSR2MP.Packet
 {
     public class RefineryItemPacket : IPacket
     {
-        public PacketReliability Reliability => PacketReliability.UnreliableUnordered;
+        public PacketReliability Reliability => PacketReliability.ReliableOrdered;
 
         public PacketType Type => RefineryItem;
 

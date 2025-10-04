@@ -25,15 +25,15 @@ public partial class NetworkHandler
     private static void HandleMoneyChange(NetPlayerState netPlayer, SetMoneyPacket packet, byte channel)
     {
         handlingPacket = true;
-        
-        var currency = CurrencyUtility.DefaultCurrency;
+
+        var currency = gameContext.LookupDirector._currencyList[packet.type - 1].Cast<ICurrency>();
         var currentMoney = sceneContext.PlayerState.GetCurrency(currency);
         var difference = packet.newMoney - currentMoney;
         
         if (difference > 0)
-            sceneContext.PlayerState.AddCurrency(currency, difference, false, null);
+            sceneContext.PlayerState.AddCurrency(currency, difference);
         else if (difference < 0)
-            sceneContext.PlayerState.SpendCurrency(currency, -difference, null);
+            sceneContext.PlayerState.SpendCurrency(currency, -difference);
         
         handlingPacket = false;
     }
@@ -156,6 +156,32 @@ public partial class NetworkHandler
             {
                 gameObj = null,
                 state = (SwitchHandler.State)packet.state,
+            };
+            sceneContext.GameModel.switches.Add(packet.id, model);
+        }
+    }
+
+
+    [PacketResponse]
+    private static void HandlePlortDepositor(NetPlayerState netPlayer, PlortDepositPacket packet, byte channel)
+    {
+
+        if (sceneContext.GameModel.depositors.TryGetValue(packet.id, out var model))
+        {
+            model.AmountDeposited = packet.count;
+            if (model._gameObject)
+            {
+                handlingPacket = true;
+                model._gameObject.GetComponent<PlortDepositor>().OnFilledChanged();
+                handlingPacket = false;
+            }
+        }
+        else
+        {
+            model = new PlortDepositorModel
+            {
+                _gameObject = null,
+                AmountDeposited = packet.count
             };
             sceneContext.GameModel.switches.Add(packet.id, model);
         }

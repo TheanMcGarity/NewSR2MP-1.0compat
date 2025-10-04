@@ -13,19 +13,20 @@ namespace NewSR2MP.Packet
         public PacketType Type => SetCurrency;
 
         public int newMoney;
-        // public PlayerState.CoinsType type;
+        public byte type;
         
         public void Serialize(OutgoingMessage msg)
         {
             
             msg.Write(newMoney);
-
+            msg.Write(type);
             
         }
 
         public void Deserialize(IncomingMessage msg)
         {
             newMoney = msg.ReadInt32();
+            type = msg.ReadByte();
         }
     }
 }

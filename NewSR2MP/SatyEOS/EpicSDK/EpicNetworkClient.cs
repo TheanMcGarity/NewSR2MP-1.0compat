@@ -156,11 +156,6 @@ namespace NewSR2MP.EpicSDK
             if(remoteUserId == EpicApplication.Instance.Authentication.ProductUserId)
             {
                 Status = NetworkClientStatus.Disconnected;
-
-                if (SceneManager.GetActiveScene().buildIndex == 3)
-                {
-                    SceneManager.LoadScene(2);
-                }
             }
         }
         

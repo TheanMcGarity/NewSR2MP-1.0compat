@@ -20,7 +20,7 @@ namespace NewSR2MP.Patches
             {
                 PediaPacket packet = new PediaPacket()
                 {
-                    id = entry.name
+                    id = entry.PersistenceId
                 };
                 MultiplayerManager.NetworkSend(packet);
             }

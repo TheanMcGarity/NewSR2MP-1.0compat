@@ -112,7 +112,7 @@ namespace NewSR2MP.Patches
             }
             foreach (var pedia in saveRef._pediaEntryLookup)// SavedGame's list doesnt include some pedia entries.
             {
-                pediaEntries[pedia.key] = pedia.value; 
+                pediaEntries[pedia.value.PersistenceId] = pedia.value; 
             }
 
             foreach (var scene in saveRef._sceneGroupTranslation.RawLookupDictionary)
