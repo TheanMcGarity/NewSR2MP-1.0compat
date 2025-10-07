@@ -11,23 +11,25 @@ namespace NewSR2MP.Packet
         public List<InitAccessData> initAccess;
         public List<InitSwitchData> initSwitches;
         public Dictionary<string, TreasurePod.State> initPods;
-        
+
         public List<InitResourceNodeData> initResourceNodes;
 
         public List<string> initPedias;
         public List<string> initMaps;
 
+        public Dictionary<string, ushort> initPlortDepositors;
+
         public HashSet<InitGordoData> initGordos;
 
         public LocalPlayerData localPlayerSave;
         public int playerID;
-        
+
         public int money;
         public int moneyRainbow;
-        
+
         public Dictionary<byte, sbyte> upgrades;
         public double time;
-        
+
         public List<float> marketPrices = new();
         public Dictionary<int, int> refineryItems = new();
 
@@ -65,7 +67,7 @@ namespace NewSR2MP.Packet
                     case InitActorData.GadgetType.LINKED_WITH_AMMO:
                         msg.Write(actor.constructionEndTime);
                         msg.Write(actor.linkedId);
-                        
+
                         msg.Write(actor.ammo.slots);
 
                         msg.Write(actor.ammo.ammo.Count);
@@ -73,23 +75,31 @@ namespace NewSR2MP.Packet
                         {
                             msg.Write(ammo);
                         }
+
+                        break;
+                    case InitActorData.GadgetType.DRONE:
+                        msg.Write(actor.constructionEndTime); // do drones have construction timing?
+                        msg.Write(actor.battery);
                         break;
                     default:
-                        MelonLogger.Error(new NotImplementedException($"Failed to find Gadget Type {actor.gadgetType}"));
+                        MelonLogger.Error(
+                            new NotImplementedException($"Failed to find Gadget Type {actor.gadgetType}"));
                         break;
                 }
             }
+
             msg.Write(initPlayers.Count);
             foreach (var player in initPlayers)
             {
                 msg.Write(player.id);
                 msg.Write(player.username);
             }
+
             msg.Write(initPlots.Count);
             foreach (var plot in initPlots)
             {
                 msg.Write(plot.id);
-                msg.Write((int)plot.type); 
+                msg.Write((int)plot.type);
                 msg.Write(plot.upgrades.Count);
 
                 foreach (var upg in plot.upgrades)
@@ -109,16 +119,18 @@ namespace NewSR2MP.Packet
                         msg.Write(ammo);
                     }
                 }
+
                 msg.Write(plot.cropIdent);
-                
+
                 msg.Write(plot.siloSlotSelections.Length);
                 foreach (var selected in plot.siloSlotSelections)
                 {
                     msg.Write(selected);
                 }
-                
+
                 msg.Write((byte)plot.feederSpeed);
             }
+
             msg.Write(initGordos.Count);
             foreach (var gordo in initGordos)
             {
@@ -127,16 +139,19 @@ namespace NewSR2MP.Packet
                 msg.Write(gordo.ident);
                 msg.Write(gordo.targetCount);
             }
+
             msg.Write(initPedias.Count);
             foreach (var pedia in initPedias)
             {
                 msg.Write(pedia);
             }
+
             msg.Write(initMaps.Count);
             foreach (var map in initMaps)
             {
                 msg.Write(map);
             }
+
             msg.Write(initAccess.Count);
             foreach (var access in initAccess)
             {
@@ -153,8 +168,9 @@ namespace NewSR2MP.Packet
             {
                 msg.Write(amm);
             }
+
             msg.Write(localPlayerSave.sceneGroup);
-            
+
             msg.Write(money);
             msg.Write(moneyRainbow);
 
@@ -164,14 +180,14 @@ namespace NewSR2MP.Packet
                 msg.Write(upgrade.Key);
                 msg.Write(upgrade.Value);
             }
-            
+
 
             msg.Write(time);
 
             msg.Write(marketPrices.Count);
             foreach (var price in marketPrices)
                 msg.Write(price);
-            
+
             msg.Write(refineryItems.Count);
             foreach (var item in refineryItems)
             {
@@ -185,7 +201,7 @@ namespace NewSR2MP.Packet
                 msg.Write(_switch.id);
                 msg.Write(_switch.state);
             }
-            
+
             msg.Write(initPods.Count);
             foreach (var pod in initPods)
             {
@@ -203,6 +219,13 @@ namespace NewSR2MP.Packet
                 msg.Write(tutorial);
 
             msg.Write(hasCompletedFirstTimeExperience);
+
+            msg.Write(initPlortDepositors.Count);
+            foreach (var depo in initPlortDepositors)
+            {
+                msg.Write(depo.Key);
+                msg.Write(depo.Value);
+            }
         }
 
         public void Deserialize(IncomingMessage msg)
@@ -240,7 +263,7 @@ namespace NewSR2MP.Packet
                     case InitActorData.GadgetType.LINKED_WITH_AMMO:
                         data.constructionEndTime = msg.ReadDouble();
                         data.linkedId = msg.ReadInt64();
-                        
+
                         int slots = msg.ReadInt32();
                         int ammLength = msg.ReadInt32();
                         HashSet<AmmoData> ammoDatas = new HashSet<AmmoData>();
@@ -256,10 +279,15 @@ namespace NewSR2MP.Packet
                             ammo = ammoDatas,
                         };
                         break;
+                    case InitActorData.GadgetType.DRONE:
+                        data.constructionEndTime = msg.ReadDouble();
+                        data.battery = msg.ReadDouble();
+                        break;
                     default:
                         MelonLogger.Error(new NotImplementedException($"Failed to find Gadget Type {gadgetType}"));
                         break;
                 }
+
                 initActors.Add(data);
             }
 
@@ -310,17 +338,18 @@ namespace NewSR2MP.Packet
                         ammo = ammoDatas
                     });
                 }
+
                 var crop = msg.ReadInt32();
-                
+
                 int slotGroupCount = msg.ReadInt32();
                 List<int> slotSelections = new();
                 for (int i2 = 0; i2 < slotGroupCount; i2++)
                 {
                     slotSelections.Add(msg.ReadInt32());
                 }
-                
+
                 SlimeFeeder.FeedSpeed feederSpeed = (SlimeFeeder.FeedSpeed)msg.ReadByte();
-                
+
                 initPlots.Add(new InitPlotData()
                 {
                     type = type,
@@ -456,6 +485,13 @@ namespace NewSR2MP.Packet
                 initTutorials.Add(msg.ReadString());
 
             hasCompletedFirstTimeExperience = msg.ReadBoolean();
+
+            int depoCount = msg.ReadInt32();
+            initPlortDepositors = new Dictionary<string, ushort>();
+            for (int i = 0; i < depoCount; i++)
+            {
+                initPlortDepositors.Add(msg.ReadString(), msg.ReadUInt16());
+            }
         }
     }
 
@@ -464,28 +500,29 @@ namespace NewSR2MP.Packet
         public enum GadgetType : byte
         {
             NON_GADGET,
-            
+
             /// <summary>
             /// Basic gadgets like decorations
             /// </summary>
             BASIC,
-            
+
             /// <summary>
             /// Teleporters
             /// </summary>
             LINKED_NO_AMMO,
-            
+
             /// <summary>
             /// Warp Depots
             /// </summary>
             LINKED_WITH_AMMO,
-            
+
             /// <summary>
             /// The drone
             /// </summary>
             DRONE,
-            
+
         }
+
         public long id;
         public int ident;
         public int scene;
@@ -495,17 +532,24 @@ namespace NewSR2MP.Packet
         // Gadgets
         public double constructionEndTime;
         public GadgetType gadgetType;
-        
+
         // LINKED_NO_AMMO
         // LINKED_WITH_AMMO
         public long linkedId;
-        
+
         // LINKED_WITH_AMMO
         public InitSiloData ammo;
-        
+
         // DRONE
+        public double battery;
     }
-    public class InitGordoData
+
+    public class CloudData
+    {
+        public List<int> storage;
+    }
+
+public class InitGordoData
     {
         // Use $"gordo{ExtendInteger(id)}" to get actual id
         public int id;

@@ -19,7 +19,7 @@ public partial class NetworkHandler
                 currentPlayerID = localPlayer.id;
                 
                 // Add map display for local player
-                sceneContext.player.AddComponent<NetworkPlayerMapDisplay>();
+                sceneContext.player.AddComponent<NetworkPlayerDisplayOnMap>().playerID = packet.id;
                 
                 // Add multiplayer waypoint display
                 sceneContext.player.AddComponent<MultiplayerWaypointMapIcon>();
@@ -50,7 +50,7 @@ public partial class NetworkHandler
                 });
                 
                 // Add map display for remote player
-                playerObj.AddComponent<NetworkPlayerMapDisplay>();
+                playerObj.AddComponent<NetworkPlayerDisplayOnMap>().playerID  = packet.id;
                 
                 playerObj.SetActive(true);
                 Object.DontDestroyOnLoad(playerObj);
@@ -90,7 +90,6 @@ public partial class NetworkHandler
             
             playerObj.GetComponent<TransformSmoother>().SetNetworkTarget(packet.pos, packet.rot.eulerAngles, estimatedVelocity);
 
-
             var anim = playerObj.GetComponent<Animator>();
 
             anim.SetFloat("HorizontalMovement", packet.horizontalMovement);
@@ -101,6 +100,13 @@ public partial class NetworkHandler
             anim.SetFloat("HorizontalSpeed", packet.horizontalSpeed);
             anim.SetFloat("ForwardSpeed", packet.forwardSpeed);
             anim.SetBool("Sprinting", packet.sprinting);
+            
+            playerObj.sceneGroup = packet.scene;
+            
+            if (ServerActive())
+                if (clientToGuid.TryGetValue(packet.id, out var guid))
+                    if (savedGame.savedPlayers.TryGetPlayer(guid, out var playerData))
+                        playerData.sceneGroup = packet.scene;
         }
         catch
         {

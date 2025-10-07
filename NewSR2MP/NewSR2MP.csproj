@@ -526,7 +526,6 @@
       <None Remove="Steamworks.NET.dll" />
       <None Remove="steam_api64.dll" />
       <None Remove="MultiplayerButton.png" />
-      <EmbeddedResource Include="MultiplayerButton.png" />
       <None Remove="Networking\SatyEOS\EpicSDK\Libs\EOSSDK-Win64-Shipping.dll" />
     </ItemGroup>
 

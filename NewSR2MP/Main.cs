@@ -413,9 +413,12 @@ public class Main : SR2EExpansionV1
                         netPlayer.usernamePanel.characterSize = 0.2f;
                         netPlayer.usernamePanel.anchor = TextAnchor.MiddleCenter;
                         netPlayer.usernamePanel.fontSize = 24;
+
+                        playerUsernames[player.username] = player.id;
+                        playerUsernamesReverse[player.id] = player.username;
                         
                         // Add map display for loaded player
-                        playerobj.AddComponent<NetworkPlayerMapDisplay>();
+                        playerobj.AddComponent<NetworkPlayerDisplayOnMap>().playerID = player.id;
                     }
                     catch
                     {
@@ -875,6 +878,27 @@ public class Main : SR2EExpansionV1
             }
         }
 
+        yield return null;
+
+        foreach (var depo in latestSaveJoined.initPlortDepositors)
+        {
+            if (!sceneContext.GameModel.depositors.TryGetValue(depo.Key, out var model))
+            {
+                model = new PlortDepositorModel()
+                {
+                    _gameObject = null,
+                    AmountDeposited = depo.Value
+                };
+                sceneContext.GameModel.depositors.Add(depo.Key, model);
+            }
+            else
+                model.AmountDeposited = depo.Value;
+            
+
+            if (model._gameObject)
+                model._gameObject.GetComponent<PlortDepositor>().OnFilledChangedFromModel();
+        }
+        
         yield return null;
         
         SceneContext.Instance.gameObject.AddComponent<TimeSmoother>();

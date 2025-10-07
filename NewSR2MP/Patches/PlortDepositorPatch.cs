@@ -7,6 +7,9 @@ public class PlortDepositorPatch
 {
     static void Postfix(PlortDepositor __instance)
     {
+        if (handlingPacket)
+            return;
+        
         MultiplayerManager.NetworkSend(new PlortDepositPacket
         {
             id = __instance._id,

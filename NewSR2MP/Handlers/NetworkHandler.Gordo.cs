@@ -24,7 +24,8 @@ public partial class NetworkHandler
                     targetCount = gameContext.LookupDirector._gordoDict[identifiableTypes[packet.ident]]
                         .GetComponent<GordoEat>().TargetCount,
                 });
-            gordo.gordoEatCount = packet.count;
+            else
+                gordo.GordoEatenCount = packet.count;
         }
         catch (Exception e)
         {

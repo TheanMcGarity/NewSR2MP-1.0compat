@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,20 +10,30 @@ using NewSR2MP.Component;
 using UnityEngine;
 namespace NewSR2MP.Patches
 {
-    [HarmonyPatch(typeof(SiloStorage), nameof(SiloStorage.InitAmmo))]
-    public class SiloStorageInitAmmo
+    internal class SiloStorageInitAmmoPostfixDelayed
     {
-        public static void Postfix(SiloStorage __instance)
+        public static IEnumerator Delayed(SiloStorage storage)
         {
+            yield return null;
+            yield return null;
+            
             try
             {
-                __instance.RegisterAmmoPointer();
+                storage.RegisterAmmoPointerUsingModel();
                 
             }
             catch (Exception e)
             {
                 SRMP.Error($"Error in network ammo!\n{e}\nThis can cause major desync!");
             }
+        }
+    }
+    [HarmonyPatch(typeof(SiloStorage), nameof(SiloStorage.InitAmmo))]
+    public class SiloStorageInitAmmo
+    {
+        public static void Postfix(SiloStorage __instance)
+        {
+            MelonCoroutines.Start(SiloStorageInitAmmoPostfixDelayed.Delayed(__instance));
         }
     }
 }

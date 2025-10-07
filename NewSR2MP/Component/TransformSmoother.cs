@@ -176,11 +176,5 @@ namespace NewSR2MP.Component
 
             positionTime = Time.unscaledTime + interpolPeriod;
         }
-
-        void OnDisable()
-        {
-            if (TryGetComponent<Rigidbody>(out var rb))
-                rb.velocity = GetComponent<NetworkActorOwnerToggle>().savedVelocity;
-        }
     }
 }

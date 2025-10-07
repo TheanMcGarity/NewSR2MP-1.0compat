@@ -1,3 +1,4 @@
+using System.Collections;
 using Il2CppMonomiPark.SlimeRancher.DataModel;
 using Il2CppMonomiPark.SlimeRancher.Slime;
 using Il2CppMonomiPark.SlimeRancher.World;
@@ -94,6 +95,16 @@ public partial class NetworkHandler
                 }
 
                 obj.GetComponent<NetworkActorOwnerToggle>().savedVelocity = packet.velocity;
+                
+                if (packet.player == currentPlayerID)
+                {
+                    obj.GetComponent<NetworkActor>().IsOwned = true;
+                    obj.GetComponent<NetworkActor>().enabled = true;
+                    obj.GetComponent<TransformSmoother>().enabled = false;
+                    MelonCoroutines.Start(ActorVelocityApplicator(packet.velocity, obj));
+                }
+                obj.GetComponent<TransformSmoother>().nextPos = packet.position;
+                obj.transform.position = packet.position;
             }
 
         }
@@ -104,6 +115,18 @@ public partial class NetworkHandler
         }
     }
 
+    private static IEnumerator ActorVelocityApplicator(Vector3 vel, GameObject actor)
+    {
+        actor.AddComponent<DontPushPlayer>();
+        yield return null;
+        actor.GetComponent<NetworkActor>().IsOwned = true;
+        actor.GetComponent<TransformSmoother>().enabled = false;
+        yield return null;
+        actor.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+        yield return null;
+        actor.GetComponent<Rigidbody>().velocity = vel;
+    }
+    
     [PacketResponse]
     private static void HandleClientActorSpawn(NetPlayerState netPlayer, ActorSpawnClientPacket packet, byte channel)
     {
@@ -183,6 +206,7 @@ public partial class NetworkHandler
                 rotation = packet.rotation,
                 velocity = packet.velocity,
                 scene = packet.scene,
+                player = packet.player,
             };
 
             long actorID = -1;
@@ -205,15 +229,6 @@ public partial class NetworkHandler
                 return;
             }
             
-            // Отправляем ActorSetOwnerPacket клиенту который бросил
-            // Это дает ему владение актером
-            var ownPacket = new ActorSetOwnerPacket()
-            {
-                id = actorID,
-                velocity = packet.velocity
-            };
-            MultiplayerManager.NetworkSend(ownPacket, MultiplayerManager.ServerSendOptions.SendToPlayer(netPlayer.playerID));
-            
             // Отправляем ActorSpawnPacket ВСЕМ игрокам (включая того кто бросил)
             // Его локальный актер был уничтожен, нужно пересоздать с правильным ID
             MultiplayerManager.NetworkSend(forwardPacket);
@@ -221,6 +236,11 @@ public partial class NetworkHandler
             var ownerToggle = obj.GetComponent<NetworkActorOwnerToggle>();
             if (ownerToggle != null)
                 ownerToggle.savedVelocity = packet.velocity;
+            obj.GetComponent<NetworkActor>().IsOwned = false;
+            obj.GetComponent<NetworkActor>().enabled = false;
+            obj.GetComponent<TransformSmoother>().enabled = true;
+            obj.GetComponent<TransformSmoother>().nextPos = packet.position;
+            obj.transform.position = packet.position;
         }
         catch (Exception e)
         {

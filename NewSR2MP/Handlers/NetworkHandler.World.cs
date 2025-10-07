@@ -172,7 +172,7 @@ public partial class NetworkHandler
             if (model._gameObject)
             {
                 handlingPacket = true;
-                model._gameObject.GetComponent<PlortDepositor>().OnFilledChanged();
+                model._gameObject.GetComponent<PlortDepositor>().OnFilledChangedFromModel();
                 handlingPacket = false;
             }
         }

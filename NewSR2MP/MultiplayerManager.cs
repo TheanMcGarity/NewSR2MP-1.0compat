@@ -293,6 +293,12 @@ namespace NewSR2MP
                             }
                         }
                         
+                        var drone = gadget.TryCast<DroneStationGadgetModel>();
+                        if (drone != null)
+                        {
+                            data.gadgetType = InitActorData.GadgetType.DRONE;
+                            data.battery = drone._energyDepleteTime.Value;
+                        }
                         if (actors.FirstOrDefault(x => x == data) == null)
                             actors.Add(data);
                     }
@@ -510,6 +516,12 @@ namespace NewSR2MP
                 List<string> completedTutorials = new List<string>();
                 bool hasCompletedFTE = false;
                 
+                Dictionary<string, ushort> plortDepos = new Dictionary<string, ushort>();
+                foreach (var depo in sceneContext.GameModel.depositors)
+                {
+                    plortDepos.Add(depo.key, (ushort)depo.value.AmountDeposited);
+                }
+                
                 // Send save data.
                 var saveMessage = new LoadPacket()
                 {
@@ -518,7 +530,8 @@ namespace NewSR2MP
                     initPlots = plots,
                     initGordos = gordos,
                     initPedias = pedias,
-                    initAccess = access, initPods = pods, initSwitches = switches, money = money, time = time,
+                    initAccess = access, initPods = pods, initSwitches = switches, time = time, initPlortDepositors = plortDepos,
+                    money = money, moneyRainbow = moneyRainbow,
                     initMaps = fogEvents, playerID = conn, localPlayerSave = localPlayerData, upgrades = upgrades,
                     marketPrices = prices, refineryItems = refineryItems,
                     initProgress = progressUnlocks,
@@ -965,13 +978,13 @@ namespace NewSR2MP
         {
             if (!SystemContext.Instance.SceneLoader.IsCurrentSceneGroupGameplay())
             {
-                SRMP.Error("You can't host a server while not being in a world!");
+                SRMP.Error(SR2ELanguageManger.translation("err.alreadyhosting"));
                 return;
             }
 
             if (ClientActive())
             {
-                SRMP.Error("You can't host a server while in one!");
+                SRMP.Error(SR2ELanguageManger.translation("err.alreadyclient"));
                 return;
             }
 

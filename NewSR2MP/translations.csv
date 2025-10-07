@@ -23,3 +23,5 @@ steam.ui.servercode,"Server code: $1","Server-Code: $1","Código del Servidor: $
 steam.ui.joinusingcode,"Join using Server Code","Verbinde mit einem Server-Code","","Rejoindre par code serveur","","Dołącz za pomocą kodu"
 steam.ui.waitforinvite,"You can also wait for an invite!","Du kannst auch auf eine Einladung warten!","","Vous pouvez également attendre une invitation!","","Możesz poczekać na zaproszenie!"
 button.multiplayer,"Multiplayer","","","","","Tryb wieloosobowy"
+err.notinworld,"You can't host a server while not being in a world!","","¡No puedes hostear un servidor si no estás en un mundo!","","Вы не можете хостить сервер, не находясь в мире!","Nie możesz hostować serwera nie będąc w żadnym świecie!"
+err.alreadyclient,"You can't host a server while in one!","","¡No puedes hostear un servidor si ya estás en uno!","","Вы не можете хостить сервер, находясь в другом!","Nie możesz hostować serwera, będąc na nim!"

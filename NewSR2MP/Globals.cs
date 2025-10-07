@@ -213,6 +213,7 @@ namespace NewSR2MP
             AutoFeederDispense,
             ClientInventorySync,
             PlortDepositor,
+            RewardKiosk,
         }
         public static byte[] ExtractResource(String filename)
         {
@@ -312,6 +313,8 @@ namespace NewSR2MP
             });
         }
 
+        public static Dictionary<IntPtr, (AmmoSlotManager manager, int slot)> managerFromSlots = new();
+        
         public static bool isJoiningAsClient = false;
 
         public static bool ServerActive() => EpicApplication.Instance.Lobby.IsLobbyOwner;
@@ -839,10 +842,30 @@ namespace NewSR2MP
             
             string plotId = landPlot._id + storage.AmmoSetReference.name;
             
-            ammoPointersToPlotIDs.TryAdd(storage.Ammo.Pointer, plotId);
-
-            if (!ammoByPlotID.TryAdd(plotId, storage.Ammo))
-                ammoByPlotID[plotId] = storage.Ammo;
+            storage.Ammo.RegisterAmmoPointer(plotId);
+        }
+        /// <summary>
+        /// This will register the ammo pointer into the lookup.
+        /// </summary>
+        public static void RegisterAmmoPointerUsingModel(this SiloStorage storage)
+        {
+            // Проверка на null для безопасности
+            if (storage == null || storage.Ammo == null || storage.AmmoSetReference == null)
+            {
+                SRMP.Debug("RegisterAmmoPointer: storage, Ammo or AmmoSetReference is null");
+                return;
+            }
+            
+            var landPlot = storage.GetComponentInParent<LandPlotLocation>();
+            if (landPlot == null)
+            {
+                SRMP.Debug("RegisterAmmoPointer: LandPlotLocation not found");
+                return;
+            }
+            
+            string plotId = landPlot._id + storage.AmmoSetReference.name;
+            
+            storage.Ammo.RegisterAmmoPointerUsingModel(plotId);
         }
 
         /// <summary>
@@ -850,10 +873,39 @@ namespace NewSR2MP
         /// </summary>
         public static void RegisterAmmoPointer(this AmmoSlotManager ammo, string id)
         {
-            ammoPointersToPlotIDs.Add(ammo.Pointer, id);
+            ammoPointersToPlotIDs.TryAdd(ammo.Pointer, id);
 
             if (!ammoByPlotID.TryAdd(id, ammo))
                 ammoByPlotID[id] = ammo;
+
+            for (int i = 0; i < ammo.Slots.Count; i++)
+                managerFromSlots.Add(ammo.Slots[i].Pointer, (ammo, i));
+            
+        }
+
+        /// <summary>
+        /// This will register the ammo pointer into the lookup.
+        /// </summary>
+        public static void RegisterAmmoPointerUsingModel(this AmmoSlotManager ammo, string id)
+        {
+            ammoPointersToPlotIDs.TryAdd(ammo.Pointer, id);
+
+            if (!ammoByPlotID.TryAdd(id, ammo))
+                ammoByPlotID[id] = ammo;
+
+            if (ammo == null)
+                throw new NullReferenceException("ammo is null");
+            if (ammo._ammoModel == null)
+                throw new NullReferenceException("ammo._ammoModel is null");
+            if (ammo._ammoModel.Slots == null)
+                throw new NullReferenceException("ammo._ammoModel.Slots is null");
+            
+            for (int i = 0; i < ammo._ammoModel.Slots.Count; i++)
+            {
+                SRMP.Log($"Registered slot {i} pointer on amoo({id}).");
+                managerFromSlots.Add(ammo._ammoModel.Slots[i].Pointer, (ammo, i));
+            }
+            
         }
 
         public static AmmoSlot[] AmmoDataToSlotsSRMP(List<NetworkAmmoDataV01> ammo)

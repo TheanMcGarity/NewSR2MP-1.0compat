@@ -59,10 +59,6 @@ namespace NewSR2MP.Component
             {
                 gameObject.AddComponent<NetworkResource>();
             }
-            
-            
-            if (ClientActive() && !ServerActive())
-                isOwned = false;
         }
         uint frame;
         public void Update()

@@ -24,7 +24,7 @@ namespace NewSR2MP.Patches
                     var packet = new GordoEatPacket()
                     {
                         id = __instance._id,
-                        count = __instance.GordoModel.gordoEatCount
+                        count = __instance.GordoModel.GordoEatenCount
                     };
 
                     MultiplayerManager.NetworkSend(packet);
@@ -34,7 +34,7 @@ namespace NewSR2MP.Patches
         }
 
     }
-    [HarmonyPatch(typeof(GordoEat), nameof(GordoEat.ReachedTarget))]
+    [HarmonyPatch(typeof(GordoEat), nameof(GordoEat.WillStartBurst))]
     public class GordoEatImmediateReachedTarget
     {
         public static void Postfix(GordoEat __instance)

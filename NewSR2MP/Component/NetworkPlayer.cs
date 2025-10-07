@@ -37,12 +37,15 @@ namespace NewSR2MP.Component
             {
                 Destroy(this);
             }
+            usernamePanel.gameObject.AddComponent<TransformLookAtCamera>().targetTransform = usernamePanel.transform;
         }
 
         public TextMesh usernamePanel;
         
         public int id;
         float transformTimer = PlayerTimer;
+
+        public int sceneGroup;
 
         public void Update()
         {

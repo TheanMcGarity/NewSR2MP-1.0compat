@@ -16,7 +16,7 @@ namespace NewSR2MP.SaveModels
     {
         // Required constructors for SaveComponentBase
         public NetPlayerV01(System.IO.BinaryReader reader, System.IO.BinaryWriter writer) : base(reader, writer) { }
-        public NetPlayerV01() : base() { }
+        public NetPlayerV01() { }
         
         public override string ComponentIdentifier { get; }
         

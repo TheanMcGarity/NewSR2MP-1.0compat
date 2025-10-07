@@ -109,6 +109,23 @@ namespace NewSR2MP.Patches
             MultiplayerManager.NetworkSend(packet);
         }
     }
+    [HarmonyPatch(typeof(AmmoSlot), nameof(AmmoSlot.DecrementAmmo))]
+    public class AmmoDecrementFromSlot
+    {
+        public static void Postfix(AmmoSlot __instance)
+        {
+            var data = managerFromSlots[__instance.Pointer];
+            
+            var packet = new AmmoRemovePacket()
+            {
+                index = data.slot,
+                count = 1,
+                id = ammoPointersToPlotIDs[data.manager.Pointer]
+            };
+            
+            MultiplayerManager.NetworkSend(packet);
+        }
+    }
 
     [HarmonyPatch(typeof(AmmoSlotManager), nameof(AmmoSlotManager.SetSelectedSlot), typeof(int))]
     public class AmmoSetSelectedSlot
