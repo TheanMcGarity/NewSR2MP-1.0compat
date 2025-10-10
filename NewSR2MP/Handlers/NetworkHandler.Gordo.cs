@@ -61,7 +61,7 @@ public partial class NetworkHandler
                 var eats = gordoObj.GetComponent<GordoEat>();
                 
                 handlingPacket = true;
-                eats.StartCoroutine(eats.ReachedTarget());
+                eats.ImmediateReachedTarget();
                 handlingPacket = false;
             }
         }

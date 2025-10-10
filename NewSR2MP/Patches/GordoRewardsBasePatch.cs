@@ -4,6 +4,6 @@ namespace NewSR2MP.Patches;
 public class GordoRewardsBasePatch
 {
     public static bool Prefix(GordoRewardsBase __instance)
-        => __instance.gameObject.GetComponent<PreventReward>() == null;
+        => !__instance.gameObject.GetComponent<PreventReward>();
     
 }

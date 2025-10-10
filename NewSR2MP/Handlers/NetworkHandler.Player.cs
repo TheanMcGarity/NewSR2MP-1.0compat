@@ -20,9 +20,6 @@ public partial class NetworkHandler
                 
                 // Add map display for local player
                 sceneContext.player.AddComponent<NetworkPlayerDisplayOnMap>().playerID = packet.id;
-                
-                // Add multiplayer waypoint display
-                sceneContext.player.AddComponent<MultiplayerWaypointMapIcon>();
             }
             else
             {

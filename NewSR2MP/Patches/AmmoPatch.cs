@@ -114,6 +114,9 @@ namespace NewSR2MP.Patches
     {
         public static void Postfix(AmmoSlot __instance)
         {
+            if (!managerFromSlots.ContainsKey(__instance.Pointer))
+                return;
+            
             var data = managerFromSlots[__instance.Pointer];
             
             var packet = new AmmoRemovePacket()

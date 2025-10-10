@@ -4,32 +4,27 @@ namespace NewSR2MP.Patches
     [HarmonyPatch(typeof(MapDirector), nameof(MapDirector.SetPlayerNavigationMarker))]
     internal class MapDirectorSetPlayerNavigationMarker
     {
-        public static bool Prefix(MapDirector __instance, Vector3 position, MapDefinition onMap, float minimumDistanceToPlace)
+        public static bool Prefix(MapDirector __instance, Vector3 position, MapDefinition onMap,
+            float minimumDistanceToPlace)
         {
             if (handlingNavPacket) return true;
-            
-            // Проверяем, есть ли уже waypoint у текущего игрока рядом с этой позицией
-            if (MultiplayerWaypointManager.Instance != null)
+
+            var existingWaypoint = MultiplayerWaypointManager.Instance.GetWaypoint((ushort)currentPlayerID);
+            if (existingWaypoint != null && existingWaypoint.isActive)
             {
-                var existingWaypoint = MultiplayerWaypointManager.Instance.GetWaypoint((ushort)currentPlayerID);
-                if (existingWaypoint != null && existingWaypoint.isActive)
+                float distance = Vector3.Distance(position, existingWaypoint.position);
+                
+                if (distance < 15f)
                 {
-                    // Проверяем расстояние до существующего waypoint
-                    float distance = Vector3.Distance(position, existingWaypoint.position);
-                    
-                    // Если кликнули близко к существующему waypoint (в пределах 15 метров) - удаляем его
-                    if (distance < 15f)
-                    {
-                        SRMP.Debug($"Removing existing waypoint (clicked nearby, distance: {distance:F1}m)");
-                        __instance.ClearPlayerNavigationMarker();
-                        return false; // Блокируем установку нового waypoint
-                    }
+                    SRMP.Debug($"Removing existing waypoint (clicked nearby, distance: {distance:F1}m)");
+                    __instance.ClearPlayerNavigationMarker();
+                    return false; 
                 }
             }
-            
-            return true; // Продолжаем установку нового waypoint
+
+            return true;
         }
-        
+
         public static void Postfix(MapDirector __instance, Vector3 position, MapDefinition onMap, float minimumDistanceToPlace)
         {
             if (handlingNavPacket) return;

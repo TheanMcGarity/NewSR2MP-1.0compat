@@ -1,6 +1,8 @@
 using Il2CppMonomiPark.SlimeRancher.Map;
 using MelonLoader;
 using System.Collections.Generic;
+using Il2CppMonomiPark.SlimeRancher.UI;
+using Il2CppMonomiPark.SlimeRancher.UI.HUD;
 using UnityEngine;
 
 namespace NewSR2MP.Component
@@ -25,7 +27,7 @@ namespace NewSR2MP.Component
         }
 
         // Хранилище waypoints: playerID -> WaypointData
-        private Dictionary<ushort, WaypointData> playerWaypoints;
+        public Dictionary<ushort, WaypointData> playerWaypoints;
 
         // Визуальные маяки waypoints в мире
         private Dictionary<ushort, GameObject> waypointBeacons;
@@ -58,9 +60,13 @@ namespace NewSR2MP.Component
             // Создаем или обновляем визуальный маяк
             UpdateWaypointBeacon(playerID);
 
+            
+            
             SRMP.Debug($"Set waypoint for player {playerID} at {position}");
         }
 
+        
+        
         /// <summary>
         /// Удаляет waypoint игрока
         /// </summary>
@@ -194,6 +200,7 @@ namespace NewSR2MP.Component
         public Vector3 position;
         public MapType mapType;
         public bool isActive;
+        public GameObject? iconObject;
     }
 }
 

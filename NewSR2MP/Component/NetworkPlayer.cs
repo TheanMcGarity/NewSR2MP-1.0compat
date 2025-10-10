@@ -24,6 +24,9 @@ namespace NewSR2MP.Component
             usernamePanel.characterSize = 0.2f;
             usernamePanel.anchor = TextAnchor.MiddleCenter;
             usernamePanel.fontSize = 24;
+            if (!usernamePanel.GetComponent<TransformLookAtCamera>())
+                usernamePanel.gameObject.AddComponent<TransformLookAtCamera>()
+                    .targetTransform = usernamePanel.transform;
         }
         
         internal void Intialize(ProductUserId epicID)
@@ -37,9 +40,18 @@ namespace NewSR2MP.Component
             {
                 Destroy(this);
             }
-            usernamePanel.gameObject.AddComponent<TransformLookAtCamera>().targetTransform = usernamePanel.transform;
+            
         }
 
+
+        void Start()
+        {
+            if (usernamePanel)
+                usernamePanel.gameObject.AddComponent<TransformLookAtCamera>()
+                    .targetTransform = usernamePanel.transform;
+        }
+
+        
         public TextMesh usernamePanel;
         
         public int id;

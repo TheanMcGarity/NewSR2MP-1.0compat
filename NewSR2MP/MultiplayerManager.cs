@@ -112,8 +112,8 @@ namespace NewSR2MP
 
         public void OnDestroy()
         {
-            SRMP.Error("THIS SHOULD NOT APPEAR!!!!");
-            SRMP.Error("SR2MP has quit unexpectedly, restart your game to play multiplayer.");
+            //SRMP.Error("THIS SHOULD NOT APPEAR!!!!");
+            //SRMP.Error("SR2MP has quit unexpectedly, restart your game to play multiplayer.");
         }
 
         HashSet<string> getPediaEntries()
@@ -207,7 +207,7 @@ namespace NewSR2MP
 
                 foreach (var pedia in sceneContext.PediaDirector._pediaModel.unlocked)
                 {
-                    pedias.Add(pedia.name);
+                    pedias.Add(pedia.PersistenceId);
                 }
 
                 var upgrades = new Dictionary<byte, sbyte>();
@@ -223,7 +223,6 @@ namespace NewSR2MP
                 {
                     try
                     {
-                        
                         var data = new InitActorData()
                         {
                             id = a.actorId.Value,
@@ -291,19 +290,21 @@ namespace NewSR2MP
                                     ammo = ammo
                                 };
                             }
+                            
+                            var drone = gadget.TryCast<DroneStationGadgetModel>();
+                            if (drone != null)
+                            {
+                                data.gadgetType = InitActorData.GadgetType.DRONE;
+                                data.battery = drone._energyDepleteTime.Value;
+                            }
                         }
                         
-                        var drone = gadget.TryCast<DroneStationGadgetModel>();
-                        if (drone != null)
-                        {
-                            data.gadgetType = InitActorData.GadgetType.DRONE;
-                            data.battery = drone._energyDepleteTime.Value;
-                        }
                         if (actors.FirstOrDefault(x => x == data) == null)
                             actors.Add(data);
                     }
-                    catch
+                    catch (Exception e)
                     {
+                        SRMP.Error($"Error in sending actor in MultiplayerManager.PlayerJoin\n{e}");
                     }
                 }
 

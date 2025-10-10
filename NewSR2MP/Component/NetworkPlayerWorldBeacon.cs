@@ -95,24 +95,7 @@ namespace NewSR2MP.Component
             SRMP.Debug($"Created world beacon for player {networkPlayer.id}");
         }
 
-        private Color GetPlayerColor()
-        {
-            // Get color based on player - host is cyan, clients are different colors
-            if (networkPlayer.id == currentPlayerID)
-            {
-                return Color.green; // Local player
-            }
-            else if (networkPlayer.id == ushort.MaxValue)
-            {
-                return Color.cyan; // Host
-            }
-            else
-            {
-                // Generate color based on player ID
-                float hue = (networkPlayer.id * 0.618033988749895f) % 1.0f; // Golden ratio for color distribution
-                return Color.HSVToRGB(hue, 0.8f, 1.0f);
-            }
-        }
+        private Color GetPlayerColor() => Globals.GetPlayerColor((ushort)networkPlayer.id);
 
         public void Update()
         {

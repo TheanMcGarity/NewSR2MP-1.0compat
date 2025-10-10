@@ -17,6 +17,7 @@ using Il2CppMonomiPark.SlimeRancher.Player;
 using Il2CppMonomiPark.SlimeRancher.SceneManagement;
 using Il2CppMonomiPark.SlimeRancher.Slime;
 using Il2CppMonomiPark.SlimeRancher.UI;
+using Il2CppMonomiPark.SlimeRancher.UI.HUD;
 using Il2CppMonomiPark.SlimeRancher.UI.MainMenu;
 using Il2CppMonomiPark.SlimeRancher.Util;
 using Il2CppMonomiPark.SlimeRancher.Weather;
@@ -29,6 +30,7 @@ using SR2E.Managers;
 using SRMP.Enums;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace NewSR2MP
 {
@@ -214,6 +216,9 @@ namespace NewSR2MP
             ClientInventorySync,
             PlortDepositor,
             RewardKiosk,
+            PlanterOwnership,
+            PlanterUpdate,
+            PlayerChat,
         }
         public static byte[] ExtractResource(String filename)
         {
@@ -1081,12 +1086,12 @@ namespace NewSR2MP
                             dir.RunState(f1.state.Cast<IWeatherState>(), new WeatherModel.ZoneWeatherParameters());
                             if (ClientActive())
                             {
-                                SRMP.Log($"    ✓ Applied weather state: {f1.state.name} to current zone {zoneDef?.name}");
+                                SRMP.Debug($"    ✓ Applied weather state: {f1.state.name} to current zone {zoneDef?.name}");
                             }
                         }
                         else if (ClientActive())
                         {
-                            SRMP.Debug($"    Zone {zoneDef?.name} not current (player in {dir.Zone?.name}), skipped visual");
+                            SRMP.DebugWarn($"    Zone {zoneDef?.name} not current (player in {dir.Zone?.name}), skipped visual");
                         }
                     });
 
@@ -1208,5 +1213,57 @@ namespace NewSR2MP
         public static T GetScriptableObjectByGuid<T>(string guid) where T : ScriptableObjectWithGuid 
             => Resources.FindObjectsOfTypeAll<T>().FirstOrDefault(x => x.Guid == guid);
         
+        public static Color GetPlayerColor(ushort id)
+        {
+            // Get color based on player - host is cyan, clients are different colors
+            if (id == currentPlayerID)
+            {
+                return Color.green; // Local player
+            }
+
+            if (id == ushort.MaxValue)
+            {
+                return Color.cyan; // Host
+            }
+
+            // Generate color based on player ID
+            float hue = (id * 0.618033988749895f) % 1.0f; // Golden ratio for color distribution
+            return Color.HSVToRGB(hue, 0.8f, 1.0f);
+        }
+
+        private static Sprite waypointOuterSprite;
+        private static Sprite waypointInnerSprite;
+
+        public static void InitWaypointSprites()
+        {
+            waypointOuterSprite = LoadImage("iconWaypointOuter").ConvertToSprite();
+            waypointInnerSprite = LoadImage("iconWaypointInner").ConvertToSprite();
+            
+            Object.DontDestroyOnLoad(waypointOuterSprite);
+            Object.DontDestroyOnLoad(waypointInnerSprite);
+        }
+        
+        public static GameObject CreateWaypointIcon(ushort forPlayerId, GameObject baseObject)
+        {
+            if (waypointOuterSprite == null || waypointInnerSprite == null)
+                InitWaypointSprites();
+            
+            var newObject = Object.Instantiate(baseObject);
+            
+            newObject.name = $"Player{forPlayerId}Waypoint";
+            
+            var imgOuter = newObject.getObjRec<Image>("Icon");
+            imgOuter.sprite = waypointOuterSprite;
+            
+            var imgInner = Object.Instantiate(imgOuter.gameObject, imgOuter.transform, true);
+            imgInner.GetComponent<Image>().sprite = waypointInnerSprite;
+            imgInner.GetComponent<Image>().color = GetPlayerColor(forPlayerId);
+            
+            
+
+            return newObject;
+        }
+        
+        public static CompassBarUI? compassBarUIInstance;
     }
 }

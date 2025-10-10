@@ -527,6 +527,10 @@
       <None Remove="steam_api64.dll" />
       <None Remove="MultiplayerButton.png" />
       <None Remove="Networking\SatyEOS\EpicSDK\Libs\EOSSDK-Win64-Shipping.dll" />
+      <None Remove="iconWaypointInner.png" />
+      <EmbeddedResource Include="iconWaypointInner.png" />
+      <None Remove="iconWaypointOuter.png" />
+      <EmbeddedResource Include="iconWaypointOuter.png" />
     </ItemGroup>
 
     <ItemGroup>

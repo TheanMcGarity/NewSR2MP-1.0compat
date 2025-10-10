@@ -87,9 +87,6 @@ namespace NewSR2MP
             // Add map display for host
             sceneContext.player.AddComponent<NetworkPlayerDisplayOnMap>().playerID = ushort.MaxValue;
             
-            // Add multiplayer waypoint display for host
-            sceneContext.player.AddComponent<MultiplayerWaypointMapIcon>();
-            
             RegisterAllSilos();
             
             MelonCoroutines.Start(OwnActors());

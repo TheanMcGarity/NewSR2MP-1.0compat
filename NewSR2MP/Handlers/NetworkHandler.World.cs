@@ -69,30 +69,7 @@ public partial class NetworkHandler
     [PacketResponse]
     private static void HandleNavPlace(NetPlayerState netPlayer, PlaceNavMarkerPacket packet, byte channel)
     {
-        // Добавляем waypoint в систему множественных waypoints
-        if (MultiplayerWaypointManager.Instance != null)
-        {
-            MultiplayerWaypointManager.Instance.SetWaypoint(packet.playerID, packet.position, packet.map);
-        }
-
-        // Если это waypoint локального игрока - устанавливаем его в игровой системе
-        if (packet.playerID == currentPlayerID)
-        {
-            MapDefinition map = null;
-            switch (packet.map)
-            {
-                case MapType.RainbowIsland:
-                    map = sceneContext.MapDirector._mapList._maps[0];
-                    break;
-                case MapType.Labyrinth:
-                    map = sceneContext.MapDirector._mapList._maps[1];
-                    break;
-            }
-
-            handlingNavPacket = true;
-            sceneContext.MapDirector.SetPlayerNavigationMarker(packet.position, map, 0);
-            handlingNavPacket = false;
-        }
+        MultiplayerWaypointManager.Instance.SetWaypoint(packet.playerID, packet.position, packet.map);
     }
 
     [PacketResponse]
@@ -340,5 +317,22 @@ public partial class NetworkHandler
         {
             SRMP.Error($"Failed to handle client inventory sync: {ex}");
         }
+    }
+    
+    [PacketResponse]
+    private static void HandlePlanterOwnership(NetPlayerState netPlayer, GardenOwnershipPacket packet, byte channel)
+    {
+        if (!NetworkGarden.all.ContainsKey(packet.id))
+            return;
+        
+        NetworkGarden.all[packet.id].isOwned = false;
+    }
+    [PacketResponse]
+    private static void HandlePlanterTime(NetPlayerState netPlayer, GardenUpdatePacket packet, byte channel)
+    {
+        if (!NetworkGarden.all.ContainsKey(packet.id))
+            return;
+        
+        NetworkGarden.all[packet.id].cachedTime = packet.time;
     }
 }

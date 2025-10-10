@@ -34,22 +34,19 @@ namespace NewSR2MP.Patches
         }
 
     }
-    [HarmonyPatch(typeof(GordoEat._ReachedTarget_d__46), nameof(GordoEat._ReachedTarget_d__46.MoveNext))]
+    [HarmonyPatch(typeof(GordoEat), nameof(GordoEat.ImmediateReachedTarget))]
     public class GordoEatImmediateReachedTarget
     {
-        public static void Postfix(GordoEat._ReachedTarget_d__46 __instance)
+        public static void Postfix(GordoEat __instance)
         {
             try
             {
-                if (__instance.__1__state != 0)
-                    return;
-                
                 if ((ServerActive() || ClientActive()) && !handlingPacket)
                 {
                     MultiplayerManager.NetworkSend(new GordoBurstPacket
                     {
-                        id = __instance.__4__this._id,
-                        ident = GetIdentID(__instance.__4__this.GordoModel.identifiableType)
+                        id = __instance._id,
+                        ident = GetIdentID(__instance.GordoModel.identifiableType)
                     });
                 }
             }

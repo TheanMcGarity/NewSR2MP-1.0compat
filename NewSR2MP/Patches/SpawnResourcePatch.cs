@@ -8,8 +8,7 @@ namespace NewSR2MP.Patches
     {
         public static void Postfix(SpawnResource __instance)
         {
-            if (ClientActive() && !ServerActive())
-                __instance._model.nextSpawnTime = double.MaxValue;
+            __instance.gameObject.AddComponent<NetworkGarden>();
         }
     }
 }

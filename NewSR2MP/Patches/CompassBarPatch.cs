@@ -15,9 +15,8 @@ namespace NewSR2MP.Patches
             try
             {
                 // Add multiplayer coordinates display
-                __instance.gameObject.AddComponent<MultiplayerCompassUI>();
-                
-                SRMP.Debug("Added MultiplayerCompassUI to CompassBarUI");
+                //__instance.gameObject.AddComponent<MultiplayerCompassUI>();
+                compassBarUIInstance = __instance;
             }
             catch (System.Exception ex)
             {

@@ -1,6 +1,7 @@
 ﻿
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text;
 using MelonLoader;
 using MelonLoader.Logging;
 using SR2E;
@@ -12,45 +13,58 @@ namespace NewSR2MP
 {
     public class SRMP
     {
+        private class Logger
+        {
+            internal MelonLogger.Instance melonLogger;
+            internal StringBuilder fileLogger;
+        }
 
-        private static MelonLogger.Instance logger;
-
+        private static Logger logger;
+        
+        internal static string logPath;
+        
         static SRMP()
         {
-            logger = new MelonLogger.Instance("New SR2MP");
+            logger = new Logger()
+            {
+                melonLogger = new MelonLogger.Instance("New SR2MP"),
+                fileLogger = new StringBuilder()
+            };
+            
         }
-        
+
         public static void Log(string message)
         {
             Log(message, 100);
         }
-        public static void Log(string message, int size)
+        public static void Log(string message, int sr2eSize)
         {
-            SR2ELogManager.SendMessage($"<size={size}%>{message}</size>");
-            logger.Msg(message);
+            SR2ELogManager.SendMessage($"<size={sr2eSize}%>{message}</size>");
+            logger.melonLogger.Msg(message);
+            File.AppendAllText(logPath, $"\n[INFO] {message}");
         }
         
         public static void Error(string message)
         {
             SR2ELogManager.SendError(message);
-            logger.Error(message);
+            logger.melonLogger.Error(message);
+            File.AppendAllText(logPath, $"\n[ERROR] {message}");
         }
         
         public static void Warn(string message)
         {
             SR2ELogManager.SendWarning(message);
-            logger.Warning(message);
+            logger.melonLogger.Warning(message);
+            File.AppendAllText(logPath, $"\n[WARNING] {message}");
         }
 
         public static void Debug(string message)
         {
-            if (!DEBUG_MODE)
-                return;
-            
-            if (message == null) return;
-            
-            GM<SR2EConsole>()?.Send(message, new Color(0, 127, 255));
-            logger.Msg(ColorARGB.FromArgb(0, 127, 255), message);
+            File.AppendAllText(logPath, $"\n[DEBUG] {message}");
+        }
+        public static void DebugWarn(string message)
+        {
+            File.AppendAllText(logPath, $"\n[DEBUG-WARN] {message}");
         }
     }
 }

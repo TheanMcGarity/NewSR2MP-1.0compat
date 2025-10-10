@@ -64,6 +64,10 @@ namespace NewSR2MP.Component
         {
             activeActors.Remove(this);
         }
+        void OnDestroy()
+        {
+            activeActors.Remove(this);
+        }
         
         /// <summary>
         /// Обновляет состояние актера в зависимости от расстояния до игрока

@@ -118,6 +118,7 @@ public partial class NetworkHandler
     private static IEnumerator ActorVelocityApplicator(Vector3 vel, GameObject actor)
     {
         actor.AddComponent<DontPushPlayer>();
+        actor.GetComponent<Vacuumable>()?.Launch(Vacuumable.LaunchSource.PLAYER);
         yield return null;
         actor.GetComponent<NetworkActor>().IsOwned = true;
         actor.GetComponent<TransformSmoother>().enabled = false;

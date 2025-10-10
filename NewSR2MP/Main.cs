@@ -176,6 +176,7 @@ public class Main : SR2EExpansionV1
     {
         SR2EEntryPoint.RegisterOptionMenuButtons += RegisterSR2ESettings;
         SR2ELanguageManger.AddLanguages(LoadTextFile("NewSR2MP.translations.csv"));
+        InitWaypointSprites();
     }
 
     internal static void RegisterSR2ESettings(object o, EventArgs e)
@@ -396,7 +397,7 @@ public class Main : SR2EExpansionV1
                     {
                         var playerobj =
                             UnityEngine.Object.Instantiate(MultiplayerManager.Instance.onlinePlayerPrefab);
-                        playerobj.name = $"Player{player.id}";
+                        playerobj.name = $"Player{player.id}"; 
                         var netPlayer = playerobj.GetComponent<NetworkPlayer>();
                         players.Add(new NetPlayerState()
                         {
@@ -901,7 +902,7 @@ public class Main : SR2EExpansionV1
         
         yield return null;
         
-        SceneContext.Instance.gameObject.AddComponent<TimeSmoother>();
+        SceneContext.Instance.gameObject.AddComponent<TimeSmoother>().nextTime = latestSaveJoined.time;
         
         MelonCoroutines.Start(OwnActors());
     }
@@ -970,6 +971,8 @@ public class Main : SR2EExpansionV1
         Globals.Version = int.Parse(modInstance.Info.Version);
         //ui = InitializeAssetBundle("ui");
 
+        SRMP.logPath = Path.Combine(Application.persistentDataPath, "multiplayer.log");
+        
         var obj = new GameObject();
         obj.name = "MultiplayerContext";
         obj.AddComponent<MultiplayerManager>();
@@ -977,6 +980,7 @@ public class Main : SR2EExpansionV1
 
         //UnityEngine.Object.Instantiate(ui.LoadAsset("LobbyUI")).Cast<GameObject>().transform.SetParent(obj.transform);
 
+        
         SRMP.Log("Multiplayer Initialized!");
     }
 

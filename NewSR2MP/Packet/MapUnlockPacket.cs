@@ -12,11 +12,7 @@ namespace NewSR2MP.Packet
     
         public void Serialize(OutgoingMessage msg)
         {
-            
-            
             msg.Write(id);
-
-            
         }
 
         public void Deserialize(IncomingMessage msg)
