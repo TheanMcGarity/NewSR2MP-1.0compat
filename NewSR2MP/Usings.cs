@@ -14,7 +14,10 @@ global using HarmonyLib;
 global using UnityEngine;
 global using Epic.OnlineServices.P2P;
 
-global using static SR2E.SR2EUtils;
+global using SR2E.Utils;
+global using static SR2E.ContextShortcuts;
+global using static SR2E.Utils.UnityEUtil;
+global using static SR2E.Utils.ActionsEUtil;
 global using static Il2CppInterop.Runtime.Injection.ClassInjector;
 global using static Il2Cpp.InstantiationHelpers;
 global using static Il2Cpp.Destroyer;
