@@ -1236,8 +1236,8 @@ namespace NewSR2MP
 
         public static void InitWaypointSprites()
         {
-            waypointOuterSprite = LoadImage("iconWaypointOuter").ConvertToSprite();
-            waypointInnerSprite = LoadImage("iconWaypointInner").ConvertToSprite();
+            waypointOuterSprite = LoadImage("iconWaypointOuter").Texture2DToSprite();
+            waypointInnerSprite = LoadImage("iconWaypointInner").Texture2DToSprite();
             
             Object.DontDestroyOnLoad(waypointOuterSprite);
             Object.DontDestroyOnLoad(waypointInnerSprite);
@@ -1252,7 +1252,7 @@ namespace NewSR2MP
             
             newObject.name = $"Player{forPlayerId}Waypoint";
             
-            var imgOuter = newObject.getObjRec<Image>("Icon");
+            var imgOuter = newObject.GetObjectRecursively<Image>("Icon");
             imgOuter.sprite = waypointOuterSprite;
             
             var imgInner = Object.Instantiate(imgOuter.gameObject, imgOuter.transform, true);

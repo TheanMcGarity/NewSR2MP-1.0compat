@@ -145,7 +145,7 @@ namespace NewSR2MP.Packet
         }
         public void Read(IncomingMessage msg)
         {
-            state = weatherStates[msg.ReadInt32()];
+            state = LookupEUtil.weatherStateDefinitions[msg.ReadInt32()];
             started = msg.ReadBoolean();
         }
     }
