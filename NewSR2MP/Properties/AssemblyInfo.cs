@@ -21,3 +21,5 @@ using System.Resources;
 [assembly: MelonGame("MonomiPark", "SlimeRancher2")]
 [assembly: MelonInfo(typeof(NewSR2MP.Main),"NewSR2MP", "966", "PuIIIoK, PinkTarr, shark, ThatFinn")]
 [assembly: SR2E.Expansion.SR2EExpansion]
+[assembly: AssemblyMetadata("source_code","https://github.com/TheanMcGarity/NewSR2MP-1.0compat")]
+[assembly: AssemblyMetadata("nexus","https://www.nexusmods.com/slimerancher2/mods/90")]
