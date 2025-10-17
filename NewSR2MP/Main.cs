@@ -21,6 +21,7 @@ using Newtonsoft.Json;
 using SR2E;
 using SR2E.Buttons;
 using SR2E.Commands;
+using SR2E.Enums.Features;
 using SR2E.Expansion;
 using SR2E.Managers;
 using UnityEngine;
@@ -80,7 +81,7 @@ public class GivePlayerCommand : SR2ECommand
         }
 
         if (argIndex == 1)
-            return getVaccableListByPartialName(args == null ? null : args[0], true);
+            return LookupEUtil.GetVaccableStringListByPartialName(args == null ? null : args[0], true,FeatureIntegerValue.MAX_AUTOCOMPLETE.Get());
         if (argIndex == 2)
             return new List<string> { "1", "5", "10", "20", "30", "50" };
 
@@ -99,7 +100,7 @@ public class GivePlayerCommand : SR2ECommand
         string identifierTypeName = args[1];
         IdentifiableType type = getIdentByName(identifierTypeName);
         if (type == null) return SendNotValidIdentType(identifierTypeName);
-        string itemName = type.getName();
+        string itemName = type.GetName();
         if (type.isGadget()) return SendIsGadgetNotItem(itemName);
 
         int amount = 1;
@@ -174,13 +175,16 @@ public class Main : SR2EExpansionV1
 
     public override void OnNormalInitializeMelon()
     {
-        SR2EEntryPoint.RegisterOptionMenuButtons += RegisterSR2ESettings;
-        SR2ELanguageManger.AddLanguages(LoadTextFile("NewSR2MP.translations.csv"));
+        //TODO: Migrate to MelonPrefs
+        //SR2EEntryPoint.RegisterOptionMenuButtons += RegisterSR2ESettings;
+        SR2ELanguageManger.AddLanguages(EmbeddedResourceEUtil.LoadString("translations.csv"));
         InitWaypointSprites();
     }
 
     internal static void RegisterSR2ESettings(object o, EventArgs e)
     {
+        //TODO: Migrate to MelonPrefs
+        /*
         scriptedAutoHostPort = CustomSettingsCreator.CreateScriptedInt(0);
 
         CustomSettingsCreator.Create(CustomSettingsCreator.BuiltinSettingsCategory.GameSettings,
@@ -194,7 +198,7 @@ public class Main : SR2EExpansionV1
                 7777),
             new CustomSettingsCreator.OptionValue("val1",
                 AddTranslationFromSR2E("setting.mpautohost.val2", "b.autohostval2", "UI"), scriptedAutoHostPort,
-                16500));
+                16500));*/
     }
 
     public override void OnEarlyInitializeMelon()

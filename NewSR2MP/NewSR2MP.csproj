@@ -148,14 +148,8 @@
         <HintPath>Libs\Newtonsoft.Json.dll</HintPath>
         <Private>False</Private>
       </Reference>
-      <Reference Include="RiptideNetworking">
-        <HintPath>RiptideNetworking.dll</HintPath>
-      </Reference>
       <Reference Include="SR2E">
         <HintPath>Libs\SR2E.dll</HintPath>
-      </Reference>
-      <Reference Include="Steamworks.NET">
-        <HintPath>Steamworks.NET.dll</HintPath>
       </Reference>
       <Reference Include="Unity.2D.Animation.Runtime">
         <HintPath>Libs\Unity.2D.Animation.Runtime.dll</HintPath>
@@ -265,14 +259,6 @@
         <HintPath>Libs\UnityEngine.ClothModule.dll</HintPath>
         <Private>False</Private>
       </Reference>
-      <Reference Include="UnityEngine.ClusterInputModule">
-        <HintPath>Libs\UnityEngine.ClusterInputModule.dll</HintPath>
-        <Private>False</Private>
-      </Reference>
-      <Reference Include="UnityEngine.ClusterRendererModule">
-        <HintPath>Libs\UnityEngine.ClusterRendererModule.dll</HintPath>
-        <Private>False</Private>
-      </Reference>
       <Reference Include="UnityEngine.CoreModule">
         <HintPath>Libs\UnityEngine.CoreModule.dll</HintPath>
         <Private>False</Private>
@@ -327,10 +313,6 @@
       </Reference>
       <Reference Include="UnityEngine.LocalizationModule">
         <HintPath>Libs\UnityEngine.LocalizationModule.dll</HintPath>
-        <Private>False</Private>
-      </Reference>
-      <Reference Include="UnityEngine.NVIDIAModule">
-        <HintPath>Libs\UnityEngine.NVIDIAModule.dll</HintPath>
         <Private>False</Private>
       </Reference>
       <Reference Include="UnityEngine.ParticleSystemModule">
@@ -487,10 +469,6 @@
       </Reference>
       <Reference Include="UnityEngine.VideoModule">
         <HintPath>Libs\UnityEngine.VideoModule.dll</HintPath>
-        <Private>False</Private>
-      </Reference>
-      <Reference Include="UnityEngine.VirtualTexturingModule">
-        <HintPath>Libs\UnityEngine.VirtualTexturingModule.dll</HintPath>
         <Private>False</Private>
       </Reference>
       <Reference Include="UnityEngine.VRModule">
@@ -1240,11 +1218,11 @@
     </ItemGroup>
 
     <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-      <Exec Command="&quot;$(ProjectDir)../VersionHandler/bin/Debug/net9.0/VersionHandler.exe&quot;" />
+        <Exec Command="&quot;$(ProjectDir)../VersionHandler/bin/Debug/net9.0/VersionHandler.exe&quot;" />
     </Target>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-      <Exec Command="copy &quot;$(OutDir)$(TargetFileName)&quot; &quot;$(ModsDir)&quot;&#xA;" />
+        <Exec Command="copy &quot;$(OutDir)$(TargetFileName)&quot; &quot;$(ModsDir)&quot;&#xA;" />
     </Target>
 
 </Project>

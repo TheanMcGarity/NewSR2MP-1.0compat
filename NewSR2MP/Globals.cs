@@ -149,7 +149,7 @@ namespace NewSR2MP
         /// <summary>
         /// Auto host port in options. can be 0 (off), 7777, 16500
         /// </summary>
-        public static int autoHostPort => scriptedAutoHostPort ? scriptedAutoHostPort.Value : 0;
+        //public static int autoHostPort => scriptedAutoHostPort ? scriptedAutoHostPort.Value : 0;
 
         /// <summary>
         /// Do not manually edit this.
